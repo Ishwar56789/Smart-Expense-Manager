@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dtos.SignUpDTO;
+import com.example.demo.exceptions.PasswordAndConfirmPasswordFieldIsNotMatchingException;
 import com.example.demo.model.User;
 import com.example.demo.repositories.UserRepository;
 
@@ -33,9 +34,13 @@ public class UserService {
         return user;
     }
 
-    public void saveUSerData(SignUpDTO userData) {
+    public void saveUserData(SignUpDTO userData) throws PasswordAndConfirmPasswordFieldIsNotMatchingException {
         if (userRepository.findByEmailAddress(userData.getEmailAddress()).isPresent()) {
             throw new DataIntegrityViolationException("Email address is already registred");
+        }
+
+        if (!userData.getPassword().equals(userData.getConfirmPassword())) {
+            throw new PasswordAndConfirmPasswordFieldIsNotMatchingException("Password and Confirm password field is not matching");
         }
 
         User user = dtoToEntity(userData);
