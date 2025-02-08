@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.example.demo.exceptions.PasswordAndConfirmPasswordFieldIsNotMatchingException;
 import com.example.demo.reponse.ResponseHandler;
 
 @RestControllerAdvice
@@ -22,9 +23,9 @@ public class ApplicationExceptionHandler {
             errorMap.put(error.getField(), error.getDefaultMessage());
         });
 
-        return ResponseHandler.responseBuilder(
+        return ResponseHandler.suggesionBuilder(
             errorMap, 
-            null, 
+            "Please use valid email address", 
             HttpStatus.NOT_ACCEPTABLE
         );
     }
@@ -32,10 +33,20 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> handleIntegrationViolation(DataIntegrityViolationException e) {
-        return ResponseHandler.responseBuilder(
+        return ResponseHandler.suggesionBuilder(
             Map.of("message", e.getMessage()),
             "Please use different email address", 
             HttpStatus.NOT_ACCEPTABLE
+        );
+    }
+
+
+    @ExceptionHandler(PasswordAndConfirmPasswordFieldIsNotMatchingException.class)
+    public ResponseEntity<?> handlePasswordAndConfirmPasswordFieldIsNotMatchingException(PasswordAndConfirmPasswordFieldIsNotMatchingException e) {
+        return ResponseHandler.suggesionBuilder(
+            Map.of("message", e.getMessage()), 
+            "Please type same password in both fields", 
+            HttpStatus.BAD_REQUEST
         );
     }
 
