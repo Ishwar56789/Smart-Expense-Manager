@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dtos.LogInDTO;
 import com.example.demo.dtos.SignUpDTO;
 import com.example.demo.exceptions.PasswordAndConfirmPasswordFieldIsNotMatchingException;
+import com.example.demo.exceptions.UserNotRegisteredException;
 import com.example.demo.reponse.ResponseHandler;
 import com.example.demo.services.UserService;
 
@@ -38,6 +40,17 @@ public class UserController {
     public ResponseEntity<?> registeredUser(@RequestBody @Valid SignUpDTO userData) throws PasswordAndConfirmPasswordFieldIsNotMatchingException {
         userService.saveUserData(userData);
         return ResponseHandler.responseBuilder(userData, "You are registered succesfully", HttpStatus.CREATED);
+    }
+
+
+    @PostMapping("/log-in")
+    public ResponseEntity<?> verifyUser(@RequestBody @Valid LogInDTO userCredentials) throws UserNotRegisteredException {
+        userService.verifyUser(userCredentials);
+        return ResponseHandler.responseBuilder(
+            null, 
+            "You are succesfully log-in to the application", 
+            HttpStatus.OK
+        );
     }
 
 
