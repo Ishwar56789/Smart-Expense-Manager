@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.demo.exceptions.PasswordAndConfirmPasswordFieldIsNotMatchingException;
+import com.example.demo.exceptions.UserNotRegisteredException;
 import com.example.demo.reponse.ResponseHandler;
 
 @RestControllerAdvice
@@ -47,6 +48,16 @@ public class ApplicationExceptionHandler {
             Map.of("message", e.getMessage()), 
             "Please type same password in both fields", 
             HttpStatus.BAD_REQUEST
+        );
+    }
+
+
+    @ExceptionHandler(UserNotRegisteredException.class)
+    public ResponseEntity<?> handleUserNotRegisteredException(UserNotRegisteredException e) {
+        return ResponseHandler.suggesionBuilder(
+            null, 
+            e.getMessage(), 
+            HttpStatus.NOT_FOUND
         );
     }
 
