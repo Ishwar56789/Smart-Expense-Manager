@@ -4,11 +4,15 @@ import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dtos.LogInDTO;
 import com.example.demo.dtos.SignUpDTO;
 import com.example.demo.exceptions.PasswordAndConfirmPasswordFieldIsNotMatchingException;
+import com.example.demo.exceptions.UserNotRegisteredException;
 import com.example.demo.model.User;
 import com.example.demo.repositories.UserRepository;
 
@@ -23,6 +27,9 @@ public class UserService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder; 
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     private User dtoToEntity(SignUpDTO userData) {
         User user = new User();
@@ -50,6 +57,14 @@ public class UserService {
             "Registration Mail", 
             "You are registered succesfully"
         );
+    }
+
+    public void verifyUser(LogInDTO userCredentials) throws UserNotRegisteredException {
+        if (userRepository.findByEmailAddress(userCredentials.getRegisteredUserEmail()).isEmpty()) {
+            throw new UserNotRegisteredException("You have to registered before trying to log-in");
+        }
+
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userCredentials.getRegisteredUserEmail(), userCredentials.getRegisteredUserPassword()));
     }
 
 }
