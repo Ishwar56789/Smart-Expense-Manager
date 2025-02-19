@@ -31,6 +31,9 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private AuthService authService;
+
     private User dtoToEntity(SignUpDTO userData) {
         User user = new User();
         user.setUserName(userData.getFullName());
@@ -59,12 +62,19 @@ public class UserService {
         );
     }
 
-    public void verifyUser(LogInDTO userCredentials) throws UserNotRegisteredException {
+    public String verifyUser(LogInDTO userCredentials) throws UserNotRegisteredException {
         if (userRepository.findByEmailAddress(userCredentials.getRegisteredUserEmail()).isEmpty()) {
             throw new UserNotRegisteredException("You have to registered before trying to log-in");
         }
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userCredentials.getRegisteredUserEmail(), userCredentials.getRegisteredUserPassword()));
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                userCredentials.getRegisteredUserEmail(), 
+                userCredentials.getRegisteredUserPassword()
+            ) 
+        );
+        long userId = userRepository.findUserIdByEmail(userCredentials.getRegisteredUserEmail());
+        return authService.generateToken(userCredentials.getRegisteredUserEmail(), userId);
     }
 
 }
