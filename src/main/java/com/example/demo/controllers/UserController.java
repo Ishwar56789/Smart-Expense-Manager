@@ -1,5 +1,7 @@
 package com.example.demo.controllers;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,13 +47,12 @@ public class UserController {
 
     @PostMapping("/log-in")
     public ResponseEntity<?> verifyUser(@RequestBody @Valid LogInDTO userCredentials) throws UserNotRegisteredException {
-        userService.verifyUser(userCredentials);
+        String token = userService.verifyUser(userCredentials);
         return ResponseHandler.responseBuilder(
-            null, 
+            Map.of("token", token), 
             "You are succesfully log-in to the application", 
             HttpStatus.OK
         );
     }
-
 
 }
