@@ -19,7 +19,7 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User userData = userRepository.findByEmailAddress(username)
-            .orElseThrow(() -> new UsernameNotFoundException("Your are not registered"));
+            .orElseThrow(null);
 
         return new UserPrinciple(userData);
     }
