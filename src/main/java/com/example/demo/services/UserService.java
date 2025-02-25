@@ -62,6 +62,7 @@ public class UserService {
         );
     }
 
+    
     public String verifyUser(LogInDTO userCredentials) throws UserNotRegisteredException {
         if (userRepository.findByEmailAddress(userCredentials.getRegisteredUserEmail()).isEmpty()) {
             throw new UserNotRegisteredException("You have to registered before trying to log-in");
