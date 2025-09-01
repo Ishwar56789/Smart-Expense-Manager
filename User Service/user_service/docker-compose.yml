@@ -1,0 +1,29 @@
+services:
+  mysql-sem-user_service:
+    image: mysql:latest
+    container_name: mysql-user_service-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: sem_users_db
+      MYSQL_ROOT_PASSWORD: Ishwar@3214
+    ports:
+      - 3307:3306
+    volumes:
+      - mysql-user_service_data:/var/lib/mysql
+    
+  user-service:
+    build: .
+    image: sem-user_service:v1.0
+    container_name: user-service
+    restart: always
+    depends_on:
+      - mysql-sem-user_service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-sem-user_service:3306/sem_users_db
+      SPRING_DATASOURCE_USERNAME: root 
+      SPRING_DATASOURCE_PASSWORD: Ishwar@3214
+    ports:
+      - 1000:1000
+
+volumes:
+  mysql-user_service_data:
