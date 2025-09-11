@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: user-service_route
+              uri: lb://SEM-USER-SERVICE # Service name in Eureka registry
+              predicates:
+                - Path=/api/v1/user/** # Route for user service
