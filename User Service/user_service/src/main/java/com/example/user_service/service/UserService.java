@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.user_service.dto.SignUpDTO;
+import com.example.user_service.exceptions.UserAlreadyExistsException;
 import com.example.user_service.model.User;
 import com.example.user_service.repository.UserRepository;
 
@@ -32,7 +33,11 @@ public class UserService {
         return user;
     }
 
-    public void saveUserData(SignUpDTO userData) {
+    public void saveUserData(SignUpDTO userData) throws UserAlreadyExistsException {
+        if (userRepository.existsByUserEmail(userData.getUserEmail())) {
+            throw new UserAlreadyExistsException("User with email " + userData.getUserEmail() + " already exists");
+        }
+
         User user = dtoToEntity(userData);
         userRepository.save(user);
     }
