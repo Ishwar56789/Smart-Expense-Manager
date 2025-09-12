@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.expense_service.dtos.AddExpenseDTO;
+import com.example.expense_service.dtos.ExpenseDTO;
 import com.example.expense_service.model.Expense;
 import com.example.expense_service.repository.ExpenseRepository;
 
@@ -14,6 +15,7 @@ public class ExpenseService {
 
     @Autowired
     private ExpenseRepository expenseRepository;
+
 
     private Expense dtoToExpense(AddExpenseDTO expenseData) {
         Expense expense = new Expense();
@@ -31,6 +33,24 @@ public class ExpenseService {
     public void saveExpense(AddExpenseDTO expenseData) {
         Expense expense = dtoToExpense(expenseData);
         expenseRepository.save(expense);
+    }
+
+
+    private ExpenseDTO expenseToDTO(Expense expense) {
+        ExpenseDTO expenseDTO = new ExpenseDTO();
+        expenseDTO.setExpenseTitle(expense.getExpenseTitle());
+        expenseDTO.setExpenseAmount(expense.getExpenseAmount());
+        expenseDTO.setExpenseDescription(expense.getExpenseDescription());
+        expenseDTO.setExpenseSpendingDate(expense.getExpenseSpendingDate());
+        expenseDTO.setExpenseCategory(expense.getExpenseCategory());
+        expenseDTO.setExpensePaymentMethod(expense.getExpensePaymentMethod());
+        expenseDTO.setExpenseRegistrationDate(expense.getExpenseRegistrationDate());
+        expenseDTO.setExpenseUpdateDate(expense.getExpenseUpdateDate());
+        return expenseDTO;
+    }
+
+    public Object getAllExpenses() {
+        return expenseRepository.findAll().stream().map(this::expenseToDTO).toList();
     }
 
 }
