@@ -3,12 +3,17 @@ package com.example.user_service.service;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 // import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.example.user_service.dto.LogInDTO;
 import com.example.user_service.dto.SignUpDTO;
 import com.example.user_service.exceptions.UserAlreadyExistsException;
+import com.example.user_service.exceptions.UserNotRegisteredException;
 import com.example.user_service.model.User;
 import com.example.user_service.repository.UserRepository;
 
@@ -20,6 +25,9 @@ public class UserService {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
     
 
     private User dtoToEntity(SignUpDTO userData) {
@@ -40,6 +48,27 @@ public class UserService {
 
         User user = dtoToEntity(userData);
         userRepository.save(user);
+    }
+
+
+    public String verifyUserLogIn(LogInDTO userCredentials) throws UserNotRegisteredException {
+        if (!userRepository.existsByUserEmail(userCredentials.getRegisteredEmail())) {
+            throw new UserNotRegisteredException("User not registered with email " + userCredentials.getRegisteredEmail());
+        }
+
+        try {
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    userCredentials.getRegisteredEmail(), 
+                    userCredentials.getRegisteredPassword()
+                )
+            );
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Incorrect password for email " + userCredentials.getRegisteredEmail());
+        }
+
+        Long userId = userRepository.findByUserEmail(userCredentials.getRegisteredEmail()).get().getId();
+        return "Successfully logged in! User ID: " + userId;
     }
 
 }
