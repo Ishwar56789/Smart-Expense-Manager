@@ -6,11 +6,13 @@ import java.util.Map;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.user_service.exceptions.UserAlreadyExistsException;
+import com.example.user_service.exceptions.UserNotRegisteredException;
 import com.example.user_service.handler.ResponseHandler;
 
 @RestControllerAdvice
@@ -39,10 +41,26 @@ public class ApplicationExceptionHandler {
 
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<?> handleGenericException(UserAlreadyExistsException e) {
+    public ResponseEntity<?> handleUserAlreadyExistsException(UserAlreadyExistsException e) {
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put("errorMessage", e.getMessage());
         return ResponseHandler.responseBuilder(errorMap, "Used different email for registration", HttpStatus.BAD_REQUEST);
     }  
+
+
+    @ExceptionHandler(UserNotRegisteredException.class)
+    public ResponseEntity<?> handleUserNotRegisteredException(UserNotRegisteredException e) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("errorMessage", e.getMessage());
+        return ResponseHandler.responseBuilder(errorMap, "Please, Registered before trying to log in", HttpStatus.BAD_REQUEST);
+    }  
+
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("errorMessage", e.getMessage());
+        return ResponseHandler.responseBuilder(errorMap, "Change your password if you don't remembered it", HttpStatus.BAD_REQUEST);
+    }
 
 }
