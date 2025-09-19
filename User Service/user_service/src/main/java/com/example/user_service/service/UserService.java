@@ -7,7 +7,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-// import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.example.user_service.dto.LogInDTO;
@@ -28,6 +27,9 @@ public class UserService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JWTService jwtService;
     
 
     private User dtoToEntity(SignUpDTO userData) {
@@ -68,7 +70,7 @@ public class UserService {
         }
 
         Long userId = userRepository.findByUserEmail(userCredentials.getRegisteredEmail()).get().getId();
-        return "Successfully logged in! User ID: " + userId;
+        return jwtService.generateJwtToken(userCredentials.getRegisteredEmail(), userId);
     }
 
 }
