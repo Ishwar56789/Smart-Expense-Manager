@@ -30,7 +30,7 @@ public class UserController {
 
     @GetMapping("/message")
     public ResponseEntity<?> message() {
-        return ResponseHandler.responseBuilder(null, "This is a message testing API", HttpStatus.OK);
+        return ResponseHandler.responseBuilder(null, "This is a testing API from SEM User Service", HttpStatus.OK);
     }
 
 
