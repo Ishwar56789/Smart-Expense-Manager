@@ -1,7 +1,7 @@
 services:
   mysql-sem-user_service:
     image: mysql:latest
-    container_name: mysql-user_service-db_2
+    container_name: mysql-user_service-db
     environment:
       MYSQL_DATABASE: sem_users_db
       MYSQL_ROOT_PASSWORD: Ishwar@3214
@@ -14,8 +14,8 @@ services:
     
   user-service:
     build: .
-    image: sem-user_service:v1.0.1
-    container_name: user-service_2
+    image: sem-user_service:v1.1.2
+    container_name: user-service
     depends_on:
       - mysql-sem-user_service
     environment:
