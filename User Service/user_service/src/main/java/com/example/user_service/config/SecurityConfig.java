@@ -14,7 +14,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.user_service.filter.JWTFilter;
 import com.example.user_service.service.MyUserDetailsService;
 
 @Configuration
@@ -24,13 +26,16 @@ public class SecurityConfig {
     @Autowired
     private MyUserDetailsService myUserDetailsService;
 
+    @Autowired
+    private JWTFilter jwtFilter;
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity https) throws Exception {
         return https
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
                     request
-                        .requestMatchers("/api/v1/user/sign-up", "/api/v1/user/log-in").permitAll()
+                        .requestMatchers("/api/v1/user/**").permitAll()
                         .anyRequest()
                         .authenticated()
                 )
@@ -38,12 +43,13 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }               
 
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
 
@@ -59,7 +65,7 @@ public class SecurityConfig {
 
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+    AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
