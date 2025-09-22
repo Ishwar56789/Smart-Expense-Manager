@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.expense_service.dtos.AddExpenseDTO;
+import com.example.expense_service.feign_client.SEMUserServiceFeignClient;
 import com.example.expense_service.handler.ResponseHandler;
 import com.example.expense_service.services.ExpenseService;
 
@@ -23,6 +24,9 @@ public class ExpenseController {
 
     @Autowired 
     private ExpenseService expenseService;
+
+    @Autowired
+    private SEMUserServiceFeignClient userServiceFeignClient;
 
     @PostMapping("/add-expense")
     public ResponseEntity<?> addExpense(@RequestBody @Valid AddExpenseDTO expenseData) {
@@ -36,6 +40,12 @@ public class ExpenseController {
         return ResponseHandler.resposeBuilder(
             expenseService.getAllExpenses(), "All expenses fetched successfully till " + LocalDate.now(), HttpStatus.OK
         );
+    }
+
+
+    @GetMapping("/message")
+    public ResponseEntity<?> message() {
+        return userServiceFeignClient.messageAPIFromUserService();
     }
 
 }
