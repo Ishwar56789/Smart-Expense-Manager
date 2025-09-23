@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre-alpine:latest
 
 ADD target/api_gateway.jar api_gateway.jar
 
