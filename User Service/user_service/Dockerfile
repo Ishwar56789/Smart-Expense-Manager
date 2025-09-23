@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre-alpine:latest
 
 ADD target/user-service.jar user-service.jar
 
