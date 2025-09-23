@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,23 +30,23 @@ public class ExpenseController {
     private SEMUserServiceFeignClient userServiceFeignClient;
 
     @PostMapping("/add-expense")
-    public ResponseEntity<?> addExpense(@RequestBody @Valid AddExpenseDTO expenseData) {
-        expenseService.saveExpense(expenseData);
+    public ResponseEntity<?> addExpense(@RequestBody @Valid AddExpenseDTO expenseData, @RequestHeader("Authorization") String authHeader) {
+        expenseService.saveExpense(expenseData, authHeader);
         return ResponseHandler.resposeBuilder(null, "Expense added successfully", HttpStatus.CREATED);
     }
 
 
     @GetMapping("/all-expenses")
-    public ResponseEntity<?> getAllExpenses() {
+    public ResponseEntity<?> getAllExpenses(@RequestHeader("Authorization") String authHeader) {
         return ResponseHandler.resposeBuilder(
-            expenseService.getAllExpenses(), "All expenses fetched successfully till " + LocalDate.now(), HttpStatus.OK
+            expenseService.getAllExpenses(authHeader), "All expenses fetched successfully till " + LocalDate.now(), HttpStatus.OK
         );
     }
 
 
     @GetMapping("/message")
-    public ResponseEntity<?> message() {
-        return userServiceFeignClient.messageAPIFromUserService();
+    public ResponseEntity<?> message(@RequestHeader("Authorization") String authHeader) {
+        return userServiceFeignClient.messageAPIFromUserService(authHeader);
     }
 
 }
