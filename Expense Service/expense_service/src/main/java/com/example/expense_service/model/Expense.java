@@ -53,7 +53,7 @@ public class Expense {
     private LocalDate expenseRegistrationDate;
 
     @Column(name = "user_given_id")
-    private long userId;
+    private Long userId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     @Column(name = "last_expense_updated_date")
